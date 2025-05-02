@@ -19,6 +19,14 @@ DEFAULT_DEBUG_PATH = './debug'
 
 load_dotenv()
 
+#DB
+
+DB_USER = os.getenv('DB_USER')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
+DB_HOST = os.getenv('DB_HOST')
+DB_PORT = os.getenv('DB_PORT')
+DB_NAME = os.getenv('DB_NAME')
+
 VERSION_ENDPOINT = os.getenv('VERSION_ENDPOINT', DEFAULT_VERSION_ENDPOINT)
 API_PREFIX=os.getenv('API_PREFIX', DEFAULT_API_PREFIX)
 API_TITLE=os.getenv('API_TITLE', DEFAULT_API_TITLE)

@@ -3,7 +3,9 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_smorest import Api
 
-from globals import API_PREFIX, API_TITLE, API_VERSION, DEBUG, DEBUG_PATH, PORT, SWAGGER_URL
+from globals import API_PREFIX, API_TITLE, API_VERSION, DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER, DEBUG, DEBUG_PATH, PORT, SWAGGER_URL
+
+from db import db, User
 
 def create_app(settings_module: str | None = None):
     """
@@ -20,6 +22,12 @@ def create_app(settings_module: str | None = None):
     
     # Cargar configuración
     app.config.from_object(settings_module)
+
+    # Configuración SQLAlchemy
+    app.config['SQLALCHEMY_DATABASE_URI'] = (
+        f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    )
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
     # Si estamos en modo testing, asegurarnos de que algunas configuraciones críticas están correctas
     if settings_module == 'testing':
@@ -32,6 +40,8 @@ def create_app(settings_module: str | None = None):
         ]:
             if not os.path.exists(dir_path):
                 os.makedirs(dir_path)
+    
+    db.init_app(app)
     
     CORS(app)
     
@@ -76,4 +86,6 @@ def create_app(settings_module: str | None = None):
 app = create_app()
 
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
     app.run(threaded=True, host="0.0.0.0", port=PORT, debug=DEBUG, use_reloader=DEBUG)
