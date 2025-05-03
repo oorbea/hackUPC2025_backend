@@ -29,29 +29,15 @@ class UserCRUD(MethodView):
     @blp.response(200, UserResponseSchema(many=True))
     @blp.response(500, description="Internal server error.")
     def get(self):
-    """
-    Get users filtered by optional query parameters: usuario, email.
-    """
-    try:
-        # Obtener parámetros de consulta
-        username = request.args.get('usuario')
-        email = request.args.get('email')
-
-        # Construir la consulta base
-        query = User.query
-
-        # Aplicar filtros si los parámetros están presentes
-        if username:
-            query = query.filter(User.usuario == username)
-        if email:
-            query = query.filter(User.email == email)
-
-        users: list[User] = query.all()
-        return jsonify([user.to_dict() for user in users])
-
-    except Exception as e:
-        traceback.print_exc()
-        abort(500, message="Internal server error.")
+        """
+        Get all users.
+        """
+        try:
+            users:list[User] = User.query.all()
+            return jsonify([user.to_dict() for user in users])
+        except Exception as e:
+            traceback.print_exc()
+            abort(500, message="Internal server error.")
 
     @blp.arguments(UserPayloadSchema)
     @blp.response(201, UserResponseSchema)
