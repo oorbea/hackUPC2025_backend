@@ -220,3 +220,30 @@ class UserProfilePicture(MethodView):
         except Exception:
             traceback.print_exc()
             abort(500, message="Internal server error.")
+
+@blp.route('/me')
+class UserCRUD(MethodView):
+    """
+    Get my user.
+    """
+    @jwt_required()
+    @blp.doc(
+        summary="Get your user",
+        description="Returns the authenticated user",
+        security=[{"jwt": []}]
+    )
+    @blp.response(200, UserResponseSchema)
+    @blp.response(500, description="Internal server error.")
+    def get(self):
+        """
+        Get my user.
+        """
+        try:
+            user_id = int(get_jwt_identity())
+            user:User = User.query.get(user_id)
+            if not user:
+                abort(404, message="User not found.")
+            return jsonify(user.to_dict())
+        except Exception as e:
+            traceback.print_exc()
+            abort(500, message="Internal server error.")
