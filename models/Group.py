@@ -1,5 +1,6 @@
 from sqlalchemy import func
 from db import db
+from schemas import GroupResponseSchema
 
 class Group(db.Model):
     __tablename__ = 'groups'
@@ -12,7 +13,7 @@ class Group(db.Model):
     response = db.Column(db.String(1024), nullable=True)
     created_at = db.Column(db.DateTime, server_default=func.now())
 
-    def to_dict(self):
+    def to_dict(self) -> GroupResponseSchema:
         """
         Convert the Group object to a dictionary.
         """

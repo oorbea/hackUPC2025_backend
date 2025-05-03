@@ -56,3 +56,26 @@ class GroupCRUD(MethodView):
         except Exception as e:
             db.session.rollback()
             abort(500, message="Internal server error.")
+
+    @jwt_required()
+    @blp.doc(security=[{"jwt": []}])
+    @blp.response(200, GroupResponseSchema(many=True))
+    @blp.response(400, description="Bad request.")
+    @blp.response(404, description="Not found.")
+    @blp.response(500, description="Internal server error.")
+    def get(self):
+        """
+        Get logged in user's groups.
+        """
+        try:
+            user_id = int(get_jwt_identity())
+            user:User = User.query.get(user_id)
+            if user is None:
+                abort(404, message="User not found.")
+
+            groups = db.session.query(Group).join(UserInGroup).filter(UserInGroup.user_id == user.id).all()
+
+            return jsonify([group.to_dict() for group in groups]), 200
+        except Exception as e:
+            db.session.rollback()
+            abort(500, message="Internal server error.")
