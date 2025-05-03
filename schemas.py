@@ -1,4 +1,5 @@
-from marshmallow import Schema, fields
+import json
+from marshmallow import INCLUDE, Schema, ValidationError, fields, pre_load
 
 class UserPayloadSchema(Schema):
     """
@@ -15,5 +16,5 @@ class UserResponseSchema(Schema):
     id = fields.Int(required=True, metadata={"description": "ID of the user."})
     username = fields.Str(required=True, metadata={"description": "Username of the user."})
     email = fields.Email(required=True, metadata={"description": "Email of the user."})
-    picture = fields.Str(metadata={"description": "Profile picture URL of the user."})
+    picture = fields.Str(metadata={"description": "Profile picture filename of the user."})
     created_at = fields.DateTime(format='%Y-%m-%d %H:%M:%S', metadata={"description": "Creation date of the user."})

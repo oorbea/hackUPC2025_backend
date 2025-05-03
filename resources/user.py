@@ -1,14 +1,25 @@
+import json
+import os
+from random import randint
 import traceback
-from flask import jsonify
+from flask import current_app, jsonify, request
 from flask_smorest import Blueprint, abort
 from flask.views import MethodView
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from db import db
 from models.User import User
-from schemas import UserPayloadSchema, UserResponseSchema
+from schemas import UserPayloadSchema, UserRegistrationFormSchema, UserResponseSchema
+from globals import ALLOWED_PICTURE_EXTENSIONS, PROFILE_PICTURES_DIR
+from werkzeug.utils import secure_filename
 
 blp = Blueprint('user', __name__, description='User related CRUD operations.')
+
+def allowed_file(filename: str) -> bool:
+    """
+    Check if the profile picture is allowed based on its extension.
+    """
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_PICTURE_EXTENSIONS
 
 @blp.route('/')
 class UserCRUD(MethodView):

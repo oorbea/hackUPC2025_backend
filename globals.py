@@ -14,6 +14,8 @@ DEFAULT_SWAGGER_URL = '/api-docs'
 DEFAULT_DEBUG = False
 DEFAULT_PORT = 5000
 DEFAULT_DEBUG_PATH = './debug'
+DEFAULT_FILES_DIR = './files'
+DEFAULT_PROFILE_PICTURES_DIR = os.path.join(DEFAULT_FILES_DIR, 'profile_pictures')
 
 #------------------------------
 
@@ -37,3 +39,9 @@ DEBUG = str(DEBUG).lower() in ['true', '1', 't', 'y', 'yes']
 PORT = int(os.getenv('PORT', DEFAULT_PORT))
 HOST_NAME = os.getenv('HOST_NAME', f'http://localhost:{PORT}')
 DEBUG_PATH = os.getenv('DEBUG_PATH', DEFAULT_DEBUG_PATH)
+FILES_DIR = os.getenv('FILES_DIR', DEFAULT_FILES_DIR)
+PROFILE_PICTURES_DIR = os.getenv('PROFILE_PICTURES_DIR', DEFAULT_PROFILE_PICTURES_DIR)
+
+#------------------------------
+
+ALLOWED_PICTURE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
