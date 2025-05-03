@@ -51,3 +51,10 @@ class UserProfilePictureSchema(Schema):
             "type": "file"
         }
     )
+
+class UserQuerySchema(Schema):
+    """
+    Schema for user query.
+    """
+    username = fields.Str(required=False, metadata={"description": "Username of the user."})
+    email = fields.Email(required=False, metadata={"description": "Email of the user."})
