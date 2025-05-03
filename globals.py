@@ -53,4 +53,4 @@ OPENAI_API_VERSION = os.getenv('OPENAI_API_VERSION')
 
 ALLOWED_PICTURE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
-DEFAULT_SYSTEM_PROMPT = "You are an assistant designed to help groups of users find the best trip destination for all of them.\nYou will be given a list of users and their preferences and the goal is to find the best destination in order to make most of them happy.\nHere are the users and their preferences: {context}"
+DEFAULT_SYSTEM_PROMPT = "You are an assistant designed to help groups of users find the best trip destination for all of them.\nYou will be given a list of users and their preferences, and the goal is to find the best destination in order to make most of them happy. It's extremely important that the very first thing you say is the name of the destination in snake_case.\nThe group name is {group_name} and the group description is {group_description}"
