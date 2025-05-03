@@ -1,39 +1,45 @@
-import json
-import os
-from random import randint
 import traceback
-from flask import current_app, jsonify, request
+from flask import jsonify
 from flask_smorest import Blueprint, abort
 from flask.views import MethodView
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from db import db
 from models.User import User
-from schemas import UserPayloadSchema, UserResponseSchema
-from globals import ALLOWED_PICTURE_EXTENSIONS
-from werkzeug.utils import secure_filename
+from schemas import UserPayloadSchema, UserResponseSchema, UserQuerySchema
+
+from flask import request
+from sqlalchemy import or_
 
 blp = Blueprint('user', __name__, description='User related CRUD operations.')
-
-def allowed_file(filename: str) -> bool:
-    """
-    Check if the profile picture is allowed based on its extension.
-    """
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_PICTURE_EXTENSIONS
 
 @blp.route('/')
 class UserCRUD(MethodView):
     """
     User CRUD operations.
     """
+    @blp.arguments(UserQuerySchema, location = "query")
     @blp.response(200, UserResponseSchema(many=True))
     @blp.response(500, description="Internal server error.")
-    def get(self):
+    def get(self, data):
         """
         Get all users.
         """
         try:
-            users:list[User] = User.query.all()
+            username = request.args.get('username')
+            email = request.args.get('email')
+
+            filters = []
+            if username:
+                filters.append(User.username == username)
+            if email:
+                filters.append(User.email == email)
+
+            if filters:
+                users = User.query.filter(or_(*filters)).all()
+            else:
+                users = User.query.all()
+
             return jsonify([user.to_dict() for user in users])
         except Exception as e:
             traceback.print_exc()

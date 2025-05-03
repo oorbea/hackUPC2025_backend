@@ -18,3 +18,10 @@ class UserResponseSchema(Schema):
     email = fields.Email(required=True, metadata={"description": "Email of the user."})
     picture = fields.Str(metadata={"description": "Profile picture filename of the user."})
     created_at = fields.DateTime(format='%Y-%m-%d %H:%M:%S', metadata={"description": "Creation date of the user."})
+
+class UserQuerySchema(Schema):
+    """
+    Schema for user query.
+    """
+    username = fields.Str(required=False, metadata={"description": "Username of the user."})
+    email = fields.Email(required=False, metadata={"description": "Email of the user."})
