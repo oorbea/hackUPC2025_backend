@@ -1,17 +1,30 @@
+import datetime
+import os
+from random import randint
 import traceback
-from flask import jsonify
+from flask import current_app, jsonify, send_from_directory
+from werkzeug.utils import secure_filename
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from flask_smorest import Blueprint, abort
 from flask.views import MethodView
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from db import db
+from globals import ALLOWED_PICTURE_EXTENSIONS, PROFILE_PICTURES_DIR
+
 from models.User import User
-from schemas import UserPayloadSchema, UserResponseSchema, UserQuerySchema
+from schemas import TokenResponseSchema, UserLoginSchema, UserPayloadSchema, UserResponseSchema, UserQuerySchema
 
 from flask import request
 from sqlalchemy import or_
 
 blp = Blueprint('user', __name__, description='User related CRUD operations.')
+
+def allowed_file(filename):
+    """
+    Check if the file has an allowed extension.
+    """
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_PICTURE_EXTENSIONS
 
 @blp.route('/')
 class UserCRUD(MethodView):
