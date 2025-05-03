@@ -59,6 +59,9 @@ class DemandCRUD(MethodView):
             demand_dict.pop('village')
 
             users_in_group = UserInGroup.query.filter_by(group_id=data['group_id']).all()
+            num_users = len(users_in_group)
+
+            
 
             return jsonify(demand_dict), 201
         except ValidationError as e:
