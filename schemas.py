@@ -1,6 +1,7 @@
 from marshmallow import Schema, fields
 
 from globals import OPENAI_API_KEY, OPENAI_API_VERSION, OPENAI_ENDPOINT
+from helpers.PlacesEnum import PlacesEnum
 
 class UserPayloadSchema(Schema):
     """
@@ -100,3 +101,23 @@ class EnterGroupSchema(Schema):
     """
     name = fields.Str(required=True, error_messages={"required": "Group name is required."}, metadata={"description": "Name of the group."})
     code = fields.Int(required=True, error_messages={"required": "Group code is required."}, metadata={"description": "Code of the group."})
+
+class DemandPayloadSchema(Schema):
+    """
+    Schema for demand payload.
+    """
+    group_id = fields.Int(required=True, error_messages={"required": "Group ID is required."}, metadata={"description": "ID of the group."})
+    places = fields.List(fields.Str(validate=lambda x: x in PlacesEnum.get_members()), required=True, error_messages={"required": "Places are required."}, metadata={"description": "List of places. Valid values are: " + ", ".join(PlacesEnum.get_members())})
+    price = fields.Int(required=True, error_messages={"required": "Price is required."}, metadata={"description": "Maximum price."})
+    description = fields.Str(required=True, error_messages={"required": "Description is required."}, metadata={"description": "Description of the demand."})
+
+class DemandResponseSchema(Schema):
+    """
+    Schema for demand response.
+    """
+    group_id = fields.Int(required=True, metadata={"description": "ID of the group."})
+    user_id = fields.Int(required=True, metadata={"description": "ID of the user."})
+    places = fields.List(fields.Str(validate=lambda x: x in PlacesEnum.get_members()), required=True, metadata={"description": "List of places. Valid values are: " + ", ".join(PlacesEnum.get_members())})
+    price = fields.Int(required=True, metadata={"description": "Maximum price."})
+    description = fields.Str(required=True, metadata={"description": "Description of the demand."})
+    created_at = fields.DateTime(format='iso', required=True, metadata={"description": "Creation date of the demand."})

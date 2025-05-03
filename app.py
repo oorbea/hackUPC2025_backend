@@ -10,6 +10,7 @@ from db import db
 
 from resources.user import blp as UserBluprint
 from resources.group import blp as GroupBluprint
+from resources.demand import blp as DemandBluprint
 
 def create_app(settings_module: str | None = None):
     """
@@ -95,6 +96,7 @@ def create_app(settings_module: str | None = None):
     #Routes    
     api.register_blueprint(UserBluprint, url_prefix=getApiPrefix('user'))
     api.register_blueprint(GroupBluprint, url_prefix=getApiPrefix('group'))
+    api.register_blueprint(DemandBluprint, url_prefix=getApiPrefix('demand'))
 
     #api.register_blueprint(VersionBluprint, url_prefix=VERSION_ENDPOINT)    
     
