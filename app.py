@@ -9,6 +9,7 @@ from globals import API_PREFIX, API_TITLE, API_VERSION, DB_HOST, DB_NAME, DB_PAS
 from db import db
 
 from resources.user import blp as UserBluprint
+from resources.group import blp as GroupBluprint
 
 def create_app(settings_module: str | None = None):
     """
@@ -93,6 +94,7 @@ def create_app(settings_module: str | None = None):
     
     #Routes    
     api.register_blueprint(UserBluprint, url_prefix=getApiPrefix('user'))
+    api.register_blueprint(GroupBluprint, url_prefix=getApiPrefix('group'))
 
     #api.register_blueprint(VersionBluprint, url_prefix=VERSION_ENDPOINT)    
     
@@ -102,5 +104,6 @@ app = create_app()
 
 if __name__ == "__main__":
     with app.app_context():
+        import models
         db.create_all()
     app.run(threaded=True, host="0.0.0.0", port=PORT, debug=DEBUG, use_reloader=DEBUG)

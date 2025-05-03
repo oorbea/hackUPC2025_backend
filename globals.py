@@ -43,6 +43,12 @@ FILES_DIR = os.getenv('FILES_DIR', DEFAULT_FILES_DIR)
 PROFILE_PICTURES_DIR = os.getenv('PROFILE_PICTURES_DIR', DEFAULT_PROFILE_PICTURES_DIR)
 JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
 
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+OPENAI_ENDPOINT = os.getenv('OPENAI_ENDPOINT')
+OPENAI_API_VERSION = os.getenv('OPENAI_API_VERSION')
+
 #------------------------------
 
 ALLOWED_PICTURE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+DEFAULT_SYSTEM_PROMPT = "You are an assistant designed to help groups of users find the best trip destination for all of them.\nYou will be given a list of users and their preferences and the goal is to find the best destination in order to make most of them happy.\nHere are the users and their preferences: {context}"
