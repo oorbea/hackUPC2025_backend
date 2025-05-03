@@ -1,8 +1,7 @@
 import re
-from typing import Iterable
 from controllers.LlmController import LlmController
-from openai import NOT_GIVEN, OpenAI, Stream
-from openai.types.chat import ChatCompletionChunk, ChatCompletionMessageParam
+from openai import NOT_GIVEN, AzureOpenAI
+from openai.types.chat import ChatCompletionMessageParam, ChatCompletion
 
 from schemas import OpenaiSettingsSchema
 
@@ -10,7 +9,7 @@ class OpenaiChatLlmController(LlmController):
     """
     OpenAI Chat LLM Controller class that manages the interaction with the OpenAI Chat LLM.
     """
-    def __init__(self, settings: OpenaiSettingsSchema, system_prompt: str):
+    def __init__(self, messages:list[ChatCompletionMessageParam], settings: OpenaiSettingsSchema, system_prompt: str):
         if not settings.get('api_key'):
             raise ValueError("API key is required for OpenAI Chat LLM.")
         if not settings.get('base_url'):
@@ -19,9 +18,13 @@ class OpenaiChatLlmController(LlmController):
         super().__init__(settings, system_prompt)
         client_params = {
             "api_key": settings.pop('api_key'),
-            "base_url": settings.pop('base_url')
+            "api_version": settings.pop('api_version'),
+            "azure_endpoint": settings.pop('azure_endpoint')
         }
-        self.client = OpenAI(**client_params)
+        messages.insert(0, {"role": "system", "content": system_prompt})
+        self.messages = messages
+        self.settings = settings
+        self.client = AzureOpenAI(**client_params)
 
     def _reasoningModelParamsPreparation(self, params:dict) -> dict:
         
@@ -48,12 +51,12 @@ class OpenaiChatLlmController(LlmController):
         
         return params
 
-    def run(self, messages:Iterable[ChatCompletionMessageParam] = []) -> Stream[ChatCompletionChunk]:
+    def run(self) -> ChatCompletion:
         """
         Query the OpenAI Chat LLM with the provided settings and system prompt.
         """
         params = self._reasoningModelParamsPreparation(self.settings)
-        if 'messages' in params.keys() and len(messages) == 0:
-            messages = [{'role': 'user' if msg['role'] == 'system' else msg['role'], 'content': msg['content']} for msg in messages]
+        if 'messages' in params.keys() and len(self.messages) == 0:
+            self.messages = [{'role': 'user' if msg['role'] == 'system' else msg['role'], 'content': msg['content']} for msg in self.messages]
         params.pop('messages', None)
-        return self.client.chat.completions.create(stream=True, messages=messages, **params)
+        return self.client.chat.completions.create(stream=False, messages=self.messages, **params)
