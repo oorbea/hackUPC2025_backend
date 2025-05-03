@@ -93,3 +93,10 @@ class GroupResponseSchema(Schema):
     deadline = fields.DateTime(format='iso', required=True, metadata={"description": "Deadline of the group."})
     response = fields.Str(allow_none=True, metadata={"description": "AI response of the group."})
     created_at = fields.DateTime(format='iso', required=True, metadata={"description": "Creation date of the group."})
+
+class EnterGroupSchema(Schema):
+    """
+    Schema for entering a group using a code.
+    """
+    name = fields.Str(required=True, error_messages={"required": "Group name is required."}, metadata={"description": "Name of the group."})
+    code = fields.Int(required=True, error_messages={"required": "Group code is required."}, metadata={"description": "Code of the group."})

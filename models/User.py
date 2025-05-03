@@ -27,7 +27,7 @@ class User(db.Model):
             'username': self.username,
             'email': self.email,
             'picture': self.picture,
-            'created_at': self.created_at.strftime('iso')
+            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S')
         }
     
     @staticmethod

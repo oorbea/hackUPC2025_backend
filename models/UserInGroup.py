@@ -17,5 +17,5 @@ class UserInGroup(db.Model):
         return {
             'group_id': self.group_id,
             'user_id': self.user_id,
-            'created_at': self.created_at.strftime('iso')
+            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S')
         }
