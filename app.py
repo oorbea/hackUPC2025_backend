@@ -99,5 +99,6 @@ app = create_app()
 
 if __name__ == "__main__":
     with app.app_context():
+        import models
         db.create_all()
     app.run(threaded=True, host="0.0.0.0", port=PORT, debug=DEBUG, use_reloader=DEBUG)
