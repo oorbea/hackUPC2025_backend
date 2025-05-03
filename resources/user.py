@@ -101,7 +101,7 @@ class UserLogin(MethodView):
             if not user.verify_hashed_password(login_data['password']):
                 abort(401, message="Invalid username or password.")
 
-            access_token = create_access_token(identity=user.id)
+            access_token = create_access_token(identity=str(user.id))
 
             return jsonify({"token": access_token})
 
@@ -118,34 +118,46 @@ class UserProfilePicture(MethodView):
     Upload or update the authenticated user's profile picture.
     """
     @jwt_required()
-    @blp.arguments(UserProfilePictureSchema, location='form')
+    @blp.doc(
+        summary="Upload or update your profile picture",
+        security=[{"jwt": []}],
+        requestBody={
+            "required": True,
+            "content": {
+                "multipart/form-data": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "picture": {
+                                "type": "string",
+                                "format": "binary",
+                                "description": "Profile picture file (png, jpg, jpeg, gif)"
+                            }
+                        },
+                        "required": ["picture"]
+                    }
+                }
+            }
+        }
+    )
     @blp.response(200, UserResponseSchema)
     @blp.response(400, description="Bad request.")
     @blp.response(401, description="Unauthorized.")
     @blp.response(404, description="User not found.")
     @blp.response(500, description="Internal server error.")
-    @blp.doc(security=[{"jwt": []}])
-    def patch(self, form_data):
-        """
-        Accepts multipart/form-data:
-          - picture: required file (png, jpg, jpeg, gif)
-
-        Returns the updated User object.
-        """
+    def patch(self):
         try:
             user_id = get_jwt_identity()
             user = User.query.get(user_id)
             if not user:
                 abort(404, message="User not found.")
 
-            picture = form_data.get('picture')
-            if not picture:
-                abort(400, message="Missing 'picture' file.")
+            if 'picture' not in request.files:
+                abort(400, message="Missing 'picture' file in form-data.")
+            picture = request.files['picture']
 
-            original_filename = picture.filename or ""
-            filename = secure_filename(
-                f"{user_id}_{randint(1000,9999)}_{original_filename}"
-            )
+            original = picture.filename.replace(" ", "_") or ""
+            filename = secure_filename(f"{user_id}_{randint(1000,9999)}_{original}")
             if not allowed_file(filename):
                 abort(
                     400,
@@ -155,9 +167,8 @@ class UserProfilePicture(MethodView):
                     )
                 )
 
-            upload_dir = PROFILE_PICTURES_DIR
+            upload_dir = current_app.config.get('PROFILE_PICTURES_DIR', PROFILE_PICTURES_DIR)
             os.makedirs(upload_dir, exist_ok=True)
-
             save_path = os.path.join(upload_dir, filename)
             picture.save(save_path)
 
@@ -166,12 +177,9 @@ class UserProfilePicture(MethodView):
 
             return jsonify(user.to_dict())
 
-        except ValidationError as ve:
-            abort(400, message=str(ve))
         except IntegrityError:
             db.session.rollback()
             abort(500, message="Database integrity error.")
         except Exception:
             traceback.print_exc()
             abort(500, message="Internal server error.")
-    
