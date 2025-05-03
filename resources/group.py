@@ -14,7 +14,7 @@ from schemas import EnterGroupSchema, GroupPayloadSchema, GroupResponseSchema
 
 blp = Blueprint('group', __name__, description='Group related CRUD operations.')
 
-@blp.route('/')
+@blp.route('')
 class GroupCRUD(MethodView):
     """
     Group CRUD operations.

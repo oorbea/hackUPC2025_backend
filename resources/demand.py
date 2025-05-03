@@ -12,7 +12,7 @@ from schemas import DemandPayloadSchema, DemandResponseSchema
 
 blp = Blueprint('demand', __name__, description='Demand related CRUD operations.')
 
-@blp.route('/')
+@blp.route('')
 class DemandCRUD(MethodView):
     """
     Demand CRUD operations.

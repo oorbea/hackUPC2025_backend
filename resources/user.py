@@ -26,7 +26,7 @@ def allowed_file(filename):
     """
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_PICTURE_EXTENSIONS
 
-@blp.route('/')
+@blp.route('')
 class UserCRUD(MethodView):
     """
     User CRUD operations.
