@@ -41,6 +41,7 @@ HOST_NAME = os.getenv('HOST_NAME', f'http://localhost:{PORT}')
 DEBUG_PATH = os.getenv('DEBUG_PATH', DEFAULT_DEBUG_PATH)
 FILES_DIR = os.getenv('FILES_DIR', DEFAULT_FILES_DIR)
 PROFILE_PICTURES_DIR = os.getenv('PROFILE_PICTURES_DIR', DEFAULT_PROFILE_PICTURES_DIR)
+JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
 
 #------------------------------
 

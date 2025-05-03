@@ -2,8 +2,9 @@ import os
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_smorest import Api
+from flask_jwt_extended import JWTManager
 
-from globals import API_PREFIX, API_TITLE, API_VERSION, DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER, DEBUG, DEBUG_PATH, PORT, SWAGGER_URL
+from globals import API_PREFIX, API_TITLE, API_VERSION, DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER, DEBUG, DEBUG_PATH, JWT_SECRET_KEY, PORT, SWAGGER_URL
 
 from db import db
 
@@ -17,6 +18,8 @@ def create_app(settings_module: str | None = None):
         settings_module (str, optional): Configuration module to use.
     """
     app = Flask(__name__)
+
+    app.config['JWT_SECRET_KEY'] = JWT_SECRET_KEY
     
     # Configuración por defecto
     if settings_module is None:
@@ -44,6 +47,8 @@ def create_app(settings_module: str | None = None):
                 os.makedirs(dir_path)
     
     db.init_app(app)
+
+    jwt = JWTManager(app)
 
     CORS(app)
     
