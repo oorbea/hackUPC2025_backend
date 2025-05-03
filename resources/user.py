@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 from random import randint
@@ -101,7 +102,7 @@ class UserLogin(MethodView):
             if not user.verify_hashed_password(login_data['password']):
                 abort(401, message="Invalid username or password.")
 
-            access_token = create_access_token(identity=str(user.id))
+            access_token = create_access_token(identity=str(user.id), expires_delta=datetime.timedelta(days=2))
 
             return jsonify({"token": access_token})
 
