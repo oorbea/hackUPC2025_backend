@@ -51,7 +51,12 @@ def create_app(settings_module: str | None = None):
 
     jwt = JWTManager(app)
 
-    CORS(app)
+    CORS(
+       app,
+       resources={r"/api/*": {"origins": "*"}},
+       allow_headers=["Content-Type", "Authorization"],
+       supports_credentials=True
+    )
     
     if not os.path.exists(DEBUG_PATH): os.makedirs(DEBUG_PATH)
     
