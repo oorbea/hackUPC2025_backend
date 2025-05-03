@@ -9,8 +9,8 @@ from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from db import db
 from models.User import User
-from schemas import UserPayloadSchema, UserRegistrationFormSchema, UserResponseSchema
-from globals import ALLOWED_PICTURE_EXTENSIONS, PROFILE_PICTURES_DIR
+from schemas import UserPayloadSchema, UserResponseSchema
+from globals import ALLOWED_PICTURE_EXTENSIONS
 from werkzeug.utils import secure_filename
 
 blp = Blueprint('user', __name__, description='User related CRUD operations.')
