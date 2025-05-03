@@ -9,6 +9,7 @@ from globals import API_PREFIX, API_TITLE, API_VERSION, DB_HOST, DB_NAME, DB_PAS
 from db import db
 
 from resources.user import blp as UserBluprint
+from resources.group import blp as GroupBluprint
 
 def create_app(settings_module: str | None = None):
     """
@@ -88,6 +89,7 @@ def create_app(settings_module: str | None = None):
     
     #Routes    
     api.register_blueprint(UserBluprint, url_prefix=getApiPrefix('user'))
+    api.register_blueprint(GroupBluprint, url_prefix=getApiPrefix('group'))
 
     #api.register_blueprint(VersionBluprint, url_prefix=VERSION_ENDPOINT)    
     

@@ -106,6 +106,7 @@ class UserLogin(MethodView):
     @blp.response(200, TokenResponseSchema)
     @blp.response(400, description="Bad request.")
     @blp.response(401, description="Unauthorized.")
+    @blp.response(404, description="User not found.")
     @blp.response(500, description="Internal server error.")
     def post(self, login_data):
         """
@@ -114,7 +115,7 @@ class UserLogin(MethodView):
         try:
             user:User = User.query.filter_by(username=login_data['username']).first()
             if not user:
-                abort(401, message="Invalid username or password.")
+                abort(404, message="User not found.")
 
             if not user.verify_hashed_password(login_data['password']):
                 abort(401, message="Invalid username or password.")

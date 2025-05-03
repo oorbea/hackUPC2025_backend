@@ -18,7 +18,7 @@ class UserResponseSchema(Schema):
     username = fields.Str(required=True, metadata={"description": "Username of the user."})
     email = fields.Email(required=True, metadata={"description": "Email of the user."})
     picture = fields.Str(metadata={"description": "Profile picture filename of the user."})
-    created_at = fields.DateTime(format='%Y-%m-%d %H:%M:%S', metadata={"description": "Creation date of the user."})
+    created_at = fields.DateTime(format='iso', metadata={"description": "Creation date of the user."})
 
 class UserLoginSchema(Schema):
     """
@@ -73,3 +73,23 @@ class OpenaiSettingsSchema(Schema):
     timeout = fields.Int(required=False, load_default=None, metadata={"description": "Timeout in seconds"})
     max_tokens = fields.Int(load_default=None, metadata={"description": "Maximum tokens to generate"})
     stop = fields.List(fields.Str(), load_default=None, metadata={"description": "List of tokens to stop generation"})
+
+class GroupPayloadSchema(Schema):
+    """
+    Schema for group payload.
+    """
+    name = fields.Str(required=True, error_messages={"required": "Group name is required."}, metadata={"description": "Name of the group."})
+    description = fields.Str(required=False, allow_none=True, metadata={"description": "Description of the group."})
+    deadline = fields.DateTime(format='iso', required=True, error_messages={"required": "Group deadline is required."}, metadata={"description": "Deadline of the group."})
+
+class GroupResponseSchema(Schema):
+    """
+    Schema for group response.
+    """
+    id = fields.Int(required=True, metadata={"description": "ID of the group."})
+    name = fields.Str(required=True, metadata={"description": "Name of the group."})
+    description = fields.Str(allow_none=True, metadata={"description": "Description of the group."})
+    code = fields.Int(required=True, metadata={"description": "Code of the group."})
+    deadline = fields.DateTime(format='iso', required=True, metadata={"description": "Deadline of the group."})
+    response = fields.Str(allow_none=True, metadata={"description": "AI response of the group."})
+    created_at = fields.DateTime(format='iso', required=True, metadata={"description": "Creation date of the group."})
