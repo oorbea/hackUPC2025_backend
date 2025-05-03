@@ -1,7 +1,8 @@
 import re
+from typing import Iterable
 from controllers.LlmController import LlmController
 from openai import NOT_GIVEN, OpenAI, Stream
-from openai.types.chat import ChatCompletionChunk
+from openai.types.chat import ChatCompletionChunk, ChatCompletionMessageParam
 
 from schemas import OpenaiSettingsSchema
 
@@ -47,8 +48,12 @@ class OpenaiChatLlmController(LlmController):
         
         return params
 
-    def run(self, messages:Iterable[ChatCompletionMessageParam]) -> Stream[ChatCompletionChunk]:
+    def run(self, messages:Iterable[ChatCompletionMessageParam] = []) -> Stream[ChatCompletionChunk]:
         """
         Query the OpenAI Chat LLM with the provided settings and system prompt.
         """
-        return self.client.chat.completions.create(stream=True, **self._reasoningModelParamsPreparation(self.settings))
+        params = self._reasoningModelParamsPreparation(self.settings)
+        if 'messages' in params.keys() and len(messages) == 0:
+            messages = [{'role': 'user' if msg['role'] == 'system' else msg['role'], 'content': msg['content']} for msg in messages]
+        params.pop('messages', None)
+        return self.client.chat.completions.create(stream=True, messages=messages, **params)
