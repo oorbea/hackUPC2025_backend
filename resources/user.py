@@ -2,7 +2,7 @@ import json
 import os
 from random import randint
 import traceback
-from flask import current_app, jsonify, request
+from flask import current_app, jsonify, request, send_from_directory
 from flask_smorest import Blueprint, abort
 from flask.views import MethodView
 from marshmallow import ValidationError
@@ -180,6 +180,42 @@ class UserProfilePicture(MethodView):
         except IntegrityError:
             db.session.rollback()
             abort(500, message="Database integrity error.")
+        except Exception:
+            traceback.print_exc()
+            abort(500, message="Internal server error.")
+
+    @jwt_required()
+    @blp.doc(
+        summary="Get your profile picture",
+        description="Returns the authenticated user's profile picture file.",
+        security=[{"jwt": []}]
+    )
+    @blp.response(200, description="Image file (png, jpg, jpeg, or gif)")
+    @blp.response(401, description="Unauthorized")
+    @blp.response(404, description="Profile picture not found")
+    @blp.response(500, description="Internal server error")
+    def get(self):
+        """
+        Retrieve the current user's profile picture.
+        """
+        try:
+            user_id = int(get_jwt_identity())
+            user:User = User.query.get(user_id)
+            if not user:
+                abort(404, message="User not found.")
+            if not user.picture:
+                abort(404, message="Profile picture not set.")
+
+            upload_dir = current_app.config.get(
+                'PROFILE_PICTURES_DIR',
+                PROFILE_PICTURES_DIR
+            )
+            return send_from_directory(
+                upload_dir,
+                user.picture,
+                as_attachment=False
+            )
+
         except Exception:
             traceback.print_exc()
             abort(500, message="Internal server error.")
