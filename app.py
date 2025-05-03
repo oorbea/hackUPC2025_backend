@@ -20,6 +20,7 @@ def create_app(settings_module: str | None = None):
     app = Flask(__name__)
 
     app.config['JWT_SECRET_KEY'] = JWT_SECRET_KEY
+    app.config["JWT_ACCESS_TOKEN_LEEWAY"] = 10
     
     # Configuración por defecto
     if settings_module is None:
