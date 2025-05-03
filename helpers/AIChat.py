@@ -3,6 +3,7 @@ from flask import abort
 
 from controllers.OpenaiChatLlmController import OpenaiChatLlmController
 from globals import DEFAULT_SYSTEM_PROMPT
+from helpers.EmailSender import EmailSender
 from helpers.demands_to_messages import demands_to_messages
 from models.Demand import Demand
 from schemas import OpenaiSettingsSchema
@@ -13,7 +14,18 @@ class AIChat:
     """
     AI chat completions operations.
     """
-    def query(self, data:OpenaiSettingsSchema = {}) -> str:
+    def __init__(self, email_sender:EmailSender, settings: OpenaiSettingsSchema):
+        """
+        Initialize the AI chat with the email sender and settings.
+
+        Args:
+            email_sender (EmailSender): The email sender instance.
+            settings (OpenaiSettingsSchema): The settings for the OpenAI API.
+        """
+        self.email_sender = email_sender
+        self.settings = settings
+
+    def query(self) -> str:
         """
         Get AI chat completions.
 
@@ -24,9 +36,9 @@ class AIChat:
             str: The AI chat completion response.
         """
         try:
-            demands:list[Demand] = Demand.query.filter_by(group_id=data.get('group_id')).all()
+            demands:list[Demand] = Demand.query.filter_by(group_id=self.settings.get('group_id')).all()
             messages = demands_to_messages(demands)
-            llm = OpenaiChatLlmController(messages, data, system_prompt=DEFAULT_SYSTEM_PROMPT)
+            llm = OpenaiChatLlmController(messages, self.settings, system_prompt=DEFAULT_SYSTEM_PROMPT)
             response:ChatCompletion = llm()
             mess = response.choices[0].message.content
 
@@ -35,4 +47,3 @@ class AIChat:
         except Exception as e:
             traceback.print_exc()
             abort(500, message="Internal server error.")
-
