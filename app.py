@@ -5,7 +5,9 @@ from flask_smorest import Api
 
 from globals import API_PREFIX, API_TITLE, API_VERSION, DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER, DEBUG, DEBUG_PATH, PORT, SWAGGER_URL
 
-from db import db, User
+from db import db
+
+from resources.user import blp as UserBluprint
 
 def create_app(settings_module: str | None = None):
     """
@@ -42,7 +44,7 @@ def create_app(settings_module: str | None = None):
                 os.makedirs(dir_path)
     
     db.init_app(app)
-    
+
     CORS(app)
     
     if not os.path.exists(DEBUG_PATH): os.makedirs(DEBUG_PATH)
@@ -79,6 +81,8 @@ def create_app(settings_module: str | None = None):
     def getApiPrefix(url): return f"{API_PREFIX}/{url}"
     
     #Routes    
+    api.register_blueprint(UserBluprint, url_prefix=getApiPrefix('user'))
+
     #api.register_blueprint(VersionBluprint, url_prefix=VERSION_ENDPOINT)    
     
     return app
