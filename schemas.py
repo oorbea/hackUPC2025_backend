@@ -58,3 +58,15 @@ class UserQuerySchema(Schema):
     """
     username = fields.Str(required=False, metadata={"description": "Username of the user."})
     email = fields.Email(required=False, metadata={"description": "Email of the user."})
+
+class OpenaiSettingsSchema(Schema):
+    """
+    Schema for OpenAI settings.
+    """
+    api_key = fields.Str(required=True, metadata={"description": "OpenAI API key."})
+    base_url = fields.Str(required=True, metadata={"description": "OpenAI API base URL."})
+    model = fields.Str(required=False, load_default="o4-mini", metadata={"description": "OpenAI model name."})
+    temperature = fields.Float(load_default=0.7, metadata={"description": "Text generation temperature"})
+    timeout = fields.Int(required=False, load_default=None, metadata={"description": "Timeout in seconds"})
+    max_tokens = fields.Int(load_default=None, metadata={"description": "Maximum tokens to generate"})
+    stop = fields.List(fields.Str(), load_default=None, metadata={"description": "List of tokens to stop generation"})

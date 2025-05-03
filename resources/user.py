@@ -139,6 +139,7 @@ class UserProfilePicture(MethodView):
     @blp.doc(
         summary="Upload or update your profile picture",
         security=[{"jwt": []}],
+        consumes=["multipart/form-data"],
         requestBody={
             "required": True,
             "content": {
