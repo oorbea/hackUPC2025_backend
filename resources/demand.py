@@ -8,6 +8,7 @@ from psycopg2 import IntegrityError
 from db import db
 from models.Demand import Demand
 from models.User import User
+from models.UserInGroup import UserInGroup
 from schemas import DemandPayloadSchema, DemandResponseSchema
 
 blp = Blueprint('demand', __name__, description='Demand related CRUD operations.')
@@ -56,6 +57,8 @@ class DemandCRUD(MethodView):
             demand_dict.pop('beach')
             demand_dict.pop('big_city')
             demand_dict.pop('village')
+
+            users_in_group = UserInGroup.query.filter_by(group_id=data['group_id']).all()
 
             return jsonify(demand_dict), 201
         except ValidationError as e:
