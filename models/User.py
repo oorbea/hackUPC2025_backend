@@ -53,3 +53,10 @@ class User(db.Model):
         )
 
         return bool(password_re.match(password))
+    
+    def verify_hashed_password(self, password: str) -> bool:
+        """
+        Verify the hashed password.
+        """
+        from werkzeug.security import check_password_hash
+        return check_password_hash(self.password, password)

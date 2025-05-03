@@ -1,5 +1,4 @@
-import json
-from marshmallow import INCLUDE, Schema, ValidationError, fields, pre_load
+from marshmallow import Schema, fields
 
 class UserPayloadSchema(Schema):
     """
@@ -18,3 +17,37 @@ class UserResponseSchema(Schema):
     email = fields.Email(required=True, metadata={"description": "Email of the user."})
     picture = fields.Str(metadata={"description": "Profile picture filename of the user."})
     created_at = fields.DateTime(format='%Y-%m-%d %H:%M:%S', metadata={"description": "Creation date of the user."})
+
+class UserLoginSchema(Schema):
+    """
+    Schema for user login.
+    """
+    username = fields.Str(
+        required=True,
+        metadata={"description": "User's username"}
+    )
+    password = fields.Str(
+        required=True,
+        metadata={"description": "User's password in plain text"}
+    )
+
+class TokenResponseSchema(Schema):
+    """
+    Schema for JWT response.
+    """
+    token = fields.Str(
+        required=True,
+        metadata={"description": "JWT access token"}
+    )
+
+class UserProfilePictureSchema(Schema):
+    """
+    Schema for user profile picture upload.
+    """
+    picture = fields.Raw(
+        required=True,
+        metadata={
+            "description": "Image file PNG/JPG/GIF",
+            "type": "file"
+        }
+    )
