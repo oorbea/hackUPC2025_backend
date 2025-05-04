@@ -175,7 +175,7 @@ def generate_result(settings: OpenaiSettingsSchema, group:Group, users:list[User
     )
 
     ai_chat = AIChat(sender, settings)
-    result = ai_chat.query()
+    result = ai_chat.query(group)
 
     if isinstance(users, list[User]):
         users = [user.email for user in users]
