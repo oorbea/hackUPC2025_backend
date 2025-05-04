@@ -6,7 +6,9 @@ from marshmallow import ValidationError
 from psycopg2 import IntegrityError
 
 from db import db
+from helpers.generate_result import generate_result
 from models.Demand import Demand
+from models.Group import Group
 from models.User import User
 from models.UserInGroup import UserInGroup
 from schemas import DemandPayloadSchema, DemandResponseSchema
@@ -61,7 +63,8 @@ class DemandCRUD(MethodView):
             users_in_group = UserInGroup.query.filter_by(group_id=data['group_id']).all()
             num_users = len(users_in_group)
 
-            
+            if Demand.query.filter_by(group_id=data['group_id']).count() == num_users:
+                generate_result(settings={}, group=Group.query.get(data['group_id']), users=[User.query.get(user.user_id) for user in users_in_group])
 
             return jsonify(demand_dict), 201
         except ValidationError as e:

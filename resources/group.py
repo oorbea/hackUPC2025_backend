@@ -107,7 +107,7 @@ class EnterGroup(MethodView):
             if group is None:
                 abort(404, message="Group not found.")
 
-            user_in_group = UserInGroup(group_id=group.id, user_id=user.id)
+            user_in_group = UserInGroup(group_id=group.id, user_id=user_id)
 
             db.session.add(user_in_group)
             db.session.commit()
