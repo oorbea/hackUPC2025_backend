@@ -31,7 +31,8 @@ class GroupCRUD(MethodView):
         Create a new group.
         """
         try:
-            data['code'] = randint(10000000, 99999999)
+            rand_number = randint(10000000, 99999999)
+            data['code'] = rand_number
             group = Group(**data)
 
             db.session.add(group)

@@ -45,6 +45,8 @@ JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
 EMAIL_SENDER = os.getenv('EMAIL_SENDER')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 
+DB_DROP_ALL = os.getenv('DB_DROP_ALL', 'False').lower() in ['true', '1', 't', 'y', 'yes']
+
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 OPENAI_ENDPOINT = os.getenv('OPENAI_ENDPOINT')
 OPENAI_API_VERSION = os.getenv('OPENAI_API_VERSION')

@@ -66,9 +66,9 @@ class OpenaiSettingsSchema(Schema):
     """
     Schema for OpenAI settings.
     """
-    api_key = fields.Str(required=False, load_default=OPENAI_API_KEY, metadata={"description": "OpenAI API key."})
-    azure_endpoint = fields.Str(required=False, load_default=OPENAI_ENDPOINT, metadata={"description": "OpenAI API base URL."})
-    api_version = fields.Str(required=False, load_default=OPENAI_API_VERSION, metadata={"description": "OpenAI API version."})
+    api_key = fields.Str(required=True, metadata={"description": "OpenAI API key."})
+    azure_endpoint = fields.Str(required=True, metadata={"description": "OpenAI API base URL."})
+    api_version = fields.Str(required=True, metadata={"description": "OpenAI API version."})
     model = fields.Str(required=False, load_default="o4-mini", metadata={"description": "OpenAI model name."})
     temperature = fields.Float(load_default=0.7, metadata={"description": "Text generation temperature"})
     timeout = fields.Int(required=False, load_default=None, metadata={"description": "Timeout in seconds"})

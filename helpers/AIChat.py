@@ -40,7 +40,8 @@ class AIChat:
         try:
             demands:list[Demand] = Demand.query.filter_by(group_id=group.id)
             messages = demands_to_messages(demands)
-            llm = OpenaiChatLlmController(messages, self.settings, system_prompt=DEFAULT_SYSTEM_PROMPT.replace("{group_name}", group.name)).replace("{group_description}", group.description)
+            system_prompt = DEFAULT_SYSTEM_PROMPT.replace("{group_name}", group.name).replace("{group_description}", group.description)
+            llm = OpenaiChatLlmController(messages, self.settings, system_prompt=system_prompt)
             response:ChatCompletion = llm()
             mess = response.choices[0].message.content
 

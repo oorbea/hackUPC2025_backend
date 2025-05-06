@@ -6,12 +6,13 @@ from marshmallow import ValidationError
 from psycopg2 import IntegrityError
 
 from db import db
+from globals import OPENAI_API_KEY, OPENAI_API_VERSION, OPENAI_ENDPOINT
 from helpers.generate_result import generate_result
 from models.Demand import Demand
 from models.Group import Group
 from models.User import User
 from models.UserInGroup import UserInGroup
-from schemas import DemandPayloadSchema, DemandResponseSchema
+from schemas import DemandPayloadSchema, DemandResponseSchema, OpenaiSettingsSchema
 
 blp = Blueprint('demand', __name__, description='Demand related CRUD operations.')
 
@@ -64,7 +65,16 @@ class DemandCRUD(MethodView):
             num_users = len(users_in_group)
 
             if Demand.query.filter_by(group_id=data['group_id']).count() == num_users:
-                generate_result(settings={}, group=Group.query.get(data['group_id']), users=[User.query.get(user.user_id) for user in users_in_group])
+                generate_result(
+                    settings={
+                        'api_key': OPENAI_API_KEY,
+                        'azure_endpoint': OPENAI_ENDPOINT,
+                        'api_version': OPENAI_API_VERSION,
+                        'model': 'o4-mini'
+                    },
+                    group=Group.query.get(data['group_id']),
+                    users=[User.query.get(user.user_id) for user in users_in_group]
+                )
 
             return jsonify(demand_dict), 201
         except ValidationError as e:

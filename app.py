@@ -4,7 +4,7 @@ from flask_cors import CORS
 from flask_smorest import Api
 from flask_jwt_extended import JWTManager
 
-from globals import API_PREFIX, API_TITLE, API_VERSION, DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER, DEBUG, DEBUG_PATH, JWT_SECRET_KEY, PORT, SWAGGER_URL
+from globals import API_PREFIX, API_TITLE, API_VERSION, DB_DROP_ALL, DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER, DEBUG, DEBUG_PATH, JWT_SECRET_KEY, PORT, SWAGGER_URL
 
 from db import db
 
@@ -107,5 +107,17 @@ app = create_app()
 if __name__ == "__main__":
     with app.app_context():
         import models
+
+        if DB_DROP_ALL:
+            engine = db.get_engine()
+            metadata = db.metadata
+
+            metadata.reflect(bind=engine)
+
+            for table in reversed(metadata.sorted_tables):
+                table.drop(bind=engine)
+
+            metadata.clear()
+
         db.create_all()
     app.run(threaded=True, host="0.0.0.0", port=PORT, debug=DEBUG, use_reloader=DEBUG)
